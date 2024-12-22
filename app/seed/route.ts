@@ -2,9 +2,7 @@ import bcrypt from 'bcrypt';
 import { db } from '@vercel/postgres';
 import { invoices, customers, revenue, users } from '../lib/placeholder-data';
 
-const client = await db.connect();
-
-async function seedUsers() {
+async function seedUsers(client: any) {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
   await client.sql`
     CREATE TABLE IF NOT EXISTS users (
@@ -29,9 +27,8 @@ async function seedUsers() {
   return insertedUsers;
 }
 
-async function seedInvoices() {
+async function seedInvoices(client: any) {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await client.sql`
     CREATE TABLE IF NOT EXISTS invoices (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -55,9 +52,8 @@ async function seedInvoices() {
   return insertedInvoices;
 }
 
-async function seedCustomers() {
+async function seedCustomers(client: any) {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await client.sql`
     CREATE TABLE IF NOT EXISTS customers (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -80,7 +76,7 @@ async function seedCustomers() {
   return insertedCustomers;
 }
 
-async function seedRevenue() {
+async function seedRevenue(client: any) {
   await client.sql`
     CREATE TABLE IF NOT EXISTS revenue (
       month VARCHAR(4) NOT NULL UNIQUE,
@@ -99,5 +95,27 @@ async function seedRevenue() {
   );
 
   return insertedRevenue;
+}
+
+export async function GET() {
+  const client = await db.connect();
+  
+  try {
+    await seedCustomers(client);
+    await seedUsers(client);
+    await seedInvoices(client);
+    await seedRevenue(client);
+
+    return Response.json({ 
+      success: true, 
+      message: 'Database seeded successfully' 
+    });
+  } catch (error) {
+    console.error('Error seeding database:', error);
+    return Response.json(
+      { success: false, error: 'Failed to seed database' }, 
+      { status: 500 }
+    );
+  }
 }
 
