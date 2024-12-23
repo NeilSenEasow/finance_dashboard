@@ -1,5 +1,4 @@
 import { Card } from '@/app/ui/dashboard/cards';
-import RevenueChart from '@/app/ui/dashboard/revenue-chart';
 import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
 import { lusitana } from '@/app/ui/fonts';
 import {    
@@ -9,10 +8,11 @@ import {
 } from '@/app/lib/data';  
 import { Suspense } from 'react';
 import { RevenueChartSkeleton } from '@/app/ui/skeletons';
+import { LatestInvoicesSkeleton } from '@/app/ui/skeletons';
 
 export default async function Page() {
     // const revenue = await fetchRevenue();
-    const latestInvoices = await fetchLatestInvoices();
+    // const latestInvoices = await fetchLatestInvoices();
     const {
       numberOfCustomers,
       numberOfInvoices,
@@ -39,7 +39,10 @@ export default async function Page() {
         <Suspense fallback={<RevenueChartSkeleton />}>
           <RevenueChartSkeleton />
         </Suspense>
-        <LatestInvoices latestInvoices={latestInvoices} />
+        {/* <LatestInvoices latestInvoices={latestInvoices} /> */}
+        <Suspense fallback={<LatestInvoicesSkeleton />}>
+          <LatestInvoicesSkeleton />
+        </Suspense>
       </div>
     </main>
   );
