@@ -5,6 +5,8 @@ import styles from "./ui/home.module.css"
 import { lusitana } from './ui/fonts';
 import Image from "next/image";
 
+export const experimental_ppr = true
+
 export default function Page() {
   return (
     
